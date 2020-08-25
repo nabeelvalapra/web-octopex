@@ -27,6 +27,7 @@ defmodule Fetchr.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.6"},
+      {:floki, "~> 0.27.0"}
     ]
   end
 end
