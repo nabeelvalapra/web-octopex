@@ -15,8 +15,8 @@ defmodule Fetchr.QueueAgent do
         defstruct [:url, :has_fetched]
     end
 
-    def start_link(initial_queue) do
-        Agent.start_link(fn -> initial_queue end, name: __MODULE__)
+    def start_link(_) do
+        Agent.start_link(fn -> [] end)
     end
 
     def add_to_queue(url) do
