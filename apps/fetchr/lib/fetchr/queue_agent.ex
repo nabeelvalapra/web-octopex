@@ -1,4 +1,4 @@
-defmodule Fetchr.QueueAgent do
+defmodule Fetchr.Queue do
     @moduledoc """
     An Agent that keeps the state of URLs to be / already fetched.
     Also provides API of the state for other processes.
@@ -15,8 +15,8 @@ defmodule Fetchr.QueueAgent do
         defstruct [:url, :has_fetched]
     end
 
-    def start_link(_) do
-        Agent.start_link(fn -> [] end)
+    def start_link({website_name, domain}) do
+        Agent.start_link(fn -> [domain] end, name: process_name(website_name))
     end
 
     def add_to_queue(url) do
@@ -32,5 +32,14 @@ defmodule Fetchr.QueueAgent do
             [] -> queue ++ [%{url: url_to_add, has_fetched: false}]
             _ -> queue
         end
+    end
+
+    defp process_name(name) do
+        {:via, Registry, {Fetchr.Registry, "#{name}-queue"}}
+    end
+
+    def get_supervisor_pid(name) do
+        [{pid, nil}] = Registry.lookup(Fetchr.Registry, "#{name}-queue")
+        pid
     end
 end
